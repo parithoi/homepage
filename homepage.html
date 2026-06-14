@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>START</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f1a;
+    --surface: #13131f;
+    --border: #1e1e30;
+    --accent: #7c3aed;
+    --accent2: #a855f7;
+    --glow: rgba(124, 58, 237, 0.35);
+    --text: #e2e2f0;
+    --muted: #6b6b8a;
+    --red: #ef4444;
+    --cyan: #06b6d4;
+    --gold: #f59e0b;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Animated bg grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.35;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+    animation: pulse 6s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 16px 40px;
+    gap: 24px;
+  }
+
+  /* Clock + date */
+  .clock-block {
+    text-align: center;
+    margin-bottom: -4px;
+  }
+
+  .clock {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(56px, 18vw, 88px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #fff 30%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 20px var(--glow));
+  }
+
+  .date {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Search */
+  .search-wrap {
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 52px 14px 18px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--glow);
+  }
+
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  .search-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--accent2);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+  }
+
+  /* Section label */
+  .section-label {
+    width: 100%;
+    max-width: 520px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: -10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Quick links grid */
+  .links-grid {
+    width: 100%;
+    max-width: 520px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .link-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .link-card:active {
+    transform: scale(0.96);
+  }
+
+  .link-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 14px var(--glow);
+  }
+
+  .link-icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .link-name {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+
+  /* Colored accent borders per category */
+  .link-card.anime { border-top: 2px solid var(--accent2); }
+  .link-card.manga { border-top: 2px solid var(--cyan); }
+  .link-card.game  { border-top: 2px solid var(--gold); }
+  .link-card.misc  { border-top: 2px solid #3b82f6; }
+
+  /* Bottom tag */
+  .tag {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    color: var(--border);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- Clock -->
+  <div class="clock-block">
+    <div class="clock" id="clock">00:00</div>
+    <div class="date" id="date">Loading...</div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Search the web..." autocomplete="off" />
+    <button class="search-btn" onclick="doSearch()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Anime / Streaming -->
+  <div class="section-label">Anime & Streaming</div>
+  <div class="links-grid">
+    <a class="link-card anime" href="https://crunchyroll.com">
+      <span class="link-icon">🎌</span>
+      <span class="link-name">Crunchyroll</span>
+    </a>
+    <a class="link-card anime" href="https://www.netflix.com">
+      <span class="link-icon">📺</span>
+      <span class="link-name">Netflix</span>
+    </a>
+    <a class="link-card anime" href="https://www.youtube.com">
+      <span class="link-icon">▶️</span>
+      <span class="link-name">YouTube</span>
+    </a>
+  </div>
+
+  <!-- Manga / Manhwa / Manhua -->
+  <div class="section-label">Manga / Manhwa / Manhua</div>
+  <div class="links-grid">
+    <a class="link-card manga" href="https://mangadex.org">
+      <span class="link-icon">📖</span>
+      <span class="link-name">MangaDex</span>
+    </a>
+    <a class="link-card manga" href="https://webtoons.com">
+      <span class="link-icon">🖼️</span>
+      <span class="link-name">Webtoon</span>
+    </a>
+    <a class="link-card manga" href="https://toonily.com">
+      <span class="link-icon">🌀</span>
+      <span class="link-name">Toonily</span>
+    </a>
+  </div>
+
+  <!-- Gaming -->
+  <div class="section-label">Gaming</div>
+  <div class="links-grid">
+    <a class="link-card game" href="https://store.steampowered.com">
+      <span class="link-icon">🎮</span>
+      <span class="link-name">Steam</span>
+    </a>
+    <a class="link-card game" href="https://www.ign.com">
+      <span class="link-icon">🕹️</span>
+      <span class="link-name">IGN</span>
+    </a>
+    <a class="link-card game" href="https://reddit.com/r/gaming">
+      <span class="link-icon">👾</span>
+      <span class="link-name">r/Gaming</span>
+    </a>
+  </div>
+
+  <!-- Misc -->
+  <div class="section-label">Misc</div>
+  <div class="links-grid">
+    <a class="link-card misc" href="https://reddit.com">
+      <span class="link-icon">🔴</span>
+      <span class="link-name">Reddit</span>
+    </a>
+    <a class="link-card misc" href="https://x.com">
+      <span class="link-icon">𝕏</span>
+      <span class="link-name">X / Twitter</span>
+    </a>
+    <a class="link-card misc" href="https://discord.com/app">
+      <span class="link-icon">💬</span>
+      <span class="link-name">Discord</span>
+    </a>
+  </div>
+
+  <div class="tag">// Your Domain</div>
+</div>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('clock').textContent = h + ':' + m;
+
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('date').textContent =
+      days[now.getDay()] + ' · ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  document.getElementById('search').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doSearch();
+  });
+
+  function doSearch() {
+    const q = document.getElementById('search').value.trim();
+    if (!q) return;
+    const url = q.startsWith('http') ? q : 'https://www.google.com/search?q=' + encodeURIComponent(q);
+    window.location.href = url;
+  }
+</script>
+</body>
+</html>
