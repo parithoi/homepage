@@ -58,7 +58,6 @@
   .link-card.manga { border-top:2px solid var(--cyan); }
   .link-card.game  { border-top:2px solid var(--gold); }
 
-  /* Wallpaper layer */
   #wp-layer { position:fixed; inset:0; z-index:0; background-size:cover; background-position:center; background-repeat:no-repeat; }
   body.has-wp::before { opacity:0.12; }
   body.has-wp::after  { opacity:0.4; }
@@ -66,25 +65,24 @@
   body.has-wp .search-input-wrap input,
   body.has-wp .engine-btn { backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); background:rgba(10,10,15,0.55) !important; }
 
-  /* Gear button */
   #gear-btn { position:fixed; bottom:18px; right:18px; z-index:200; width:42px; height:42px; border-radius:50%; background:var(--surface); border:1px solid var(--border); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color 0.2s,color 0.2s,transform 0.3s; -webkit-tap-highlight-color:transparent; }
   #gear-btn:active { border-color:var(--accent); color:var(--accent2); transform:rotate(60deg); }
 
-  /* Settings panel */
   #settings-panel { display:none; position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.7); align-items:flex-end; justify-content:center; }
   #settings-panel.open { display:flex; }
   .settings-sheet { background:var(--surface); border:1px solid var(--border); border-bottom:none; border-radius:20px 20px 0 0; width:100%; max-width:520px; padding:24px 20px 36px; display:flex; flex-direction:column; gap:16px; max-height:80vh; overflow-y:auto; }
   .settings-title { font-size:13px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
-  .wp-count { font-size:12px; color:var(--muted); }
+  .wp-count { font-size:12px; color:var(--muted); margin-left:6px; }
   .wp-actions { display:flex; gap:10px; }
   .wp-btn { flex:1; padding:13px 10px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px; cursor:pointer; text-align:center; transition:border-color 0.2s; -webkit-tap-highlight-color:transparent; }
   .wp-btn:active { border-color:var(--accent); }
   .wp-btn.danger { color:#f87171; border-color:#3f1212; background:#1a0a0a; }
-  .wp-thumbs { display:flex; gap:8px; flex-wrap:wrap; }
+  .wp-thumbs { display:flex; gap:8px; flex-wrap:wrap; min-height:20px; }
   .wp-thumb-wrap { position:relative; display:inline-block; }
   .wp-thumb { width:64px; height:64px; border-radius:8px; object-fit:cover; border:2px solid var(--border); display:block; }
   .wp-thumb.active-wp { border-color:var(--accent2); box-shadow:0 0 8px var(--glow); }
-  .wp-del { position:absolute; top:-6px; right:-6px; width:18px; height:18px; border-radius:50%; background:#ef4444; border:none; color:#fff; font-size:11px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:10; padding:0; }
+  .wp-del { position:absolute; top:-6px; right:-6px; width:18px; height:18px; border-radius:50%; background:#ef4444; border:none; color:#fff; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:10; padding:0; line-height:1; }
+  .wp-note { font-size:11px; color:var(--muted); }
   #wp-file-input { display:none; }
 </style>
 </head>
@@ -181,21 +179,20 @@
   </div>
 </div>
 
-<!-- Gear button -->
 <button id="gear-btn" onclick="openSettings()">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
 </button>
 
-<!-- Settings panel -->
 <div id="settings-panel" onclick="handleOverlayClick(event)">
   <div class="settings-sheet">
-    <div class="settings-title">Wallpapers <span class="wp-count" id="wp-count"></span></div>
+    <div class="settings-title">Wallpapers<span class="wp-count" id="wp-count"></span></div>
     <div class="wp-thumbs" id="wp-thumbs"></div>
     <div class="wp-actions">
       <label class="wp-btn" for="wp-file-input">＋ Add Images</label>
       <input type="file" id="wp-file-input" accept="image/*" multiple onchange="addWallpapers(event)"/>
       <button class="wp-btn danger" onclick="clearAll()">✕ Clear All</button>
     </div>
+    <div class="wp-note">Images are compressed automatically · max 10</div>
   </div>
 </div>
 
@@ -245,28 +242,47 @@
   }
   // ── Wallpaper Gallery ──────────────────────────────
   const MAX_WP = 10;
-  const STORE_KEY = 'hp_wallpapers'; // JSON array of base64 strings
+  const STORE_KEY = 'hp_wallpapers';
   const LAST_KEY  = 'hp_last_idx';
 
   function loadStore() {
     try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e) { return []; }
   }
   function saveStore(arr) {
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(arr)); } catch(e) {
-      alert('Storage full — try removing some wallpapers or using smaller images.');
-    }
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify(arr));
+      return true;
+    } catch(e) { return false; }
+  }
+
+  // Compress image to max ~200px tall, quality 0.7 JPEG
+  function compressImage(file, callback) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 1080;
+        let w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else       { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
   }
 
   function applyRandom(wallpapers) {
-    if (!wallpapers.length) return;
-    // pick random, avoid repeating last if >1 image
+    if (!wallpapers.length) return -1;
     let last = parseInt(localStorage.getItem(LAST_KEY) ?? '-1');
     let idx;
-    if (wallpapers.length === 1) {
-      idx = 0;
-    } else {
-      do { idx = Math.floor(Math.random() * wallpapers.length); } while (idx === last);
-    }
+    if (wallpapers.length === 1) { idx = 0; }
+    else { do { idx = Math.floor(Math.random() * wallpapers.length); } while (idx === last); }
     localStorage.setItem(LAST_KEY, idx);
     document.getElementById('wp-layer').style.backgroundImage = 'url(' + wallpapers[idx] + ')';
     document.body.classList.add('has-wp');
@@ -290,29 +306,33 @@
       wrap.appendChild(del);
       container.appendChild(wrap);
     });
-    const count = document.getElementById('wp-count');
-    count.textContent = wallpapers.length ? wallpapers.length + '/' + MAX_WP : '(none)';
+    const c = document.getElementById('wp-count');
+    c.textContent = wallpapers.length ? wallpapers.length + '/10' : '(none)';
   }
 
   function addWallpapers(e) {
     const files = Array.from(e.target.files);
     const wallpapers = loadStore();
     const slots = MAX_WP - wallpapers.length;
-    if (slots <= 0) { alert('Max ' + MAX_WP + ' wallpapers reached. Delete some first.'); return; }
+    if (slots <= 0) { alert('Max 10 wallpapers reached. Delete some first.'); return; }
     const toAdd = files.slice(0, slots);
-    let loaded = 0;
+    let done = 0;
     toAdd.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = ev => {
-        wallpapers.push(ev.target.result);
-        loaded++;
-        if (loaded === toAdd.length) {
-          saveStore(wallpapers);
+      compressImage(file, compressed => {
+        wallpapers.push(compressed);
+        done++;
+        if (done === toAdd.length) {
+          const ok = saveStore(wallpapers);
+          if (!ok) {
+            // try saving fewer
+            alert('Some images were too large even after compression. Try using fewer or smaller photos.');
+            wallpapers.splice(wallpapers.length - done);
+            saveStore(wallpapers);
+          }
           const idx = applyRandom(wallpapers);
           renderThumbs(wallpapers, idx);
         }
-      };
-      reader.readAsDataURL(file);
+      });
     });
     e.target.value = '';
   }
@@ -352,7 +372,7 @@
   }
   function closeSettings() { document.getElementById('settings-panel').classList.remove('open'); }
 
-  // On load: pick random wallpaper
+  // On page load: pick random wallpaper
   (function() {
     const wallpapers = loadStore();
     if (wallpapers.length) applyRandom(wallpapers);
