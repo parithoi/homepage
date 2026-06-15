@@ -4,262 +4,144 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>START</title>
-
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #0a0a0f;
-    --bg2: #0f0f1a;
-    --surface: #13131f;
-    --border: #1e1e30;
-    --accent: #7c3aed;
-    --accent2: #a855f7;
-    --glow: rgba(124, 58, 237, 0.35);
-    --text: #e2e2f0;
-    --muted: #6b6b8a;
-    --red: #ef4444;
-    --cyan: #06b6d4;
-    --gold: #f59e0b;
+    --bg: #0a0a0f; --surface: #13131f; --border: #1e1e30;
+    --accent: #7c3aed; --accent2: #a855f7; --glow: rgba(124,58,237,0.35);
+    --text: #e2e2f0; --muted: #6b6b8a; --cyan: #06b6d4; --gold: #f59e0b;
   }
-
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    overflow-x: hidden;
-  }
-
-  /* Animated bg grid */
+  html,body { height:100%; background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; overflow-x:hidden; }
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 40px 40px;
-    opacity: 0.35;
-    z-index: 0;
-    pointer-events: none;
+    content:''; position:fixed; inset:0;
+    background-image: linear-gradient(var(--border) 1px,transparent 1px), linear-gradient(90deg,var(--border) 1px,transparent 1px);
+    background-size:40px 40px; opacity:0.35; z-index:0; pointer-events:none;
   }
-
   body::after {
-    content: '';
-    position: fixed;
-    top: -30%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%);
-    z-index: 0;
-    pointer-events: none;
-    animation: pulse 6s ease-in-out infinite;
+    content:''; position:fixed; top:-30%; left:50%; transform:translateX(-50%);
+    width:600px; height:600px;
+    background:radial-gradient(circle,rgba(124,58,237,0.18) 0%,transparent 70%);
+    z-index:0; pointer-events:none; animation:pulse 6s ease-in-out infinite;
   }
-
   @keyframes pulse {
-    0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
-    50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+    0%,100%{opacity:0.6;transform:translateX(-50%) scale(1)}
+    50%{opacity:1;transform:translateX(-50%) scale(1.1)}
   }
+  .wrapper { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:28px 16px 40px; gap:24px; }
+  .clock-block { text-align:center; margin-bottom:-4px; }
+  .clock { font-size:clamp(56px,18vw,88px); font-weight:700; line-height:1; letter-spacing:4px; background:linear-gradient(135deg,#fff 30%,var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 20px var(--glow)); }
+  .date { font-size:13px; color:var(--muted); letter-spacing:3px; text-transform:uppercase; margin-top:4px; }
+  .search-wrap { width:100%; max-width:520px; display:flex; gap:8px; align-items:center; }
+  .engine-btn { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; cursor:pointer; transition:border-color 0.2s; -webkit-tap-highlight-color:transparent; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .engine-btn svg,.engine-btn img { width:22px; height:22px; }
+  .engine-btn:active { border-color:var(--accent); }
+  .search-input-wrap { position:relative; flex:1; }
+  .search-input-wrap input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 48px 14px 16px; color:var(--text); font-size:15px; outline:none; transition:border-color 0.2s,box-shadow 0.2s; }
+  .search-input-wrap input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--glow); }
+  .search-input-wrap input::placeholder { color:var(--muted); }
+  .search-btn { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--accent2); display:flex; align-items:center; padding:4px; }
+  .engine-popup { display:none; position:absolute; top:calc(100% + 8px); left:0; background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; z-index:100; min-width:190px; box-shadow:0 8px 24px rgba(0,0,0,0.5); }
+  .engine-popup.open { display:block; }
+  .engine-option { padding:12px 16px; cursor:pointer; display:flex; align-items:center; gap:10px; font-size:14px; color:var(--text); transition:background 0.15s; }
+  .engine-option svg { width:18px; height:18px; flex-shrink:0; }
+  .engine-option:hover,.engine-option.active { background:rgba(124,58,237,0.2); }
+  .engine-wrap { position:relative; flex-shrink:0; }
+  .section-label { width:100%; max-width:520px; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:10px; margin-bottom:-10px; }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+  .links-grid { width:100%; max-width:520px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .link-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 10px; text-decoration:none; color:var(--text); display:flex; flex-direction:column; align-items:center; gap:7px; transition:border-color 0.2s,transform 0.15s,box-shadow 0.2s; -webkit-tap-highlight-color:transparent; }
+  .link-card:active { transform:scale(0.96); }
+  .link-card:hover { border-color:var(--accent); box-shadow:0 0 14px var(--glow); }
+  .link-icon { width:32px; height:32px; }
+  .link-name { font-size:11px; color:var(--muted); letter-spacing:0.5px; text-align:center; }
+  .link-card.anime { border-top:2px solid var(--accent2); }
+  .link-card.manga { border-top:2px solid var(--cyan); }
+  .link-card.game  { border-top:2px solid var(--gold); }
 
-  .wrapper {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 28px 16px 40px;
-    gap: 24px;
-  }
+  /* Wallpaper layer */
+  #wp-layer { position:fixed; inset:0; z-index:0; background-size:cover; background-position:center; background-repeat:no-repeat; }
+  body.has-wp::before { opacity:0.12; }
+  body.has-wp::after  { opacity:0.4; }
+  body.has-wp .link-card,
+  body.has-wp .search-input-wrap input,
+  body.has-wp .engine-btn { backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); background:rgba(10,10,15,0.55) !important; }
 
-  /* Clock + date */
-  .clock-block {
-    text-align: center;
-    margin-bottom: -4px;
-  }
+  /* Gear button */
+  #gear-btn { position:fixed; bottom:18px; right:18px; z-index:200; width:42px; height:42px; border-radius:50%; background:var(--surface); border:1px solid var(--border); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:border-color 0.2s,color 0.2s,transform 0.3s; -webkit-tap-highlight-color:transparent; }
+  #gear-btn:active { border-color:var(--accent); color:var(--accent2); transform:rotate(60deg); }
 
-  .clock {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: clamp(56px, 18vw, 88px);
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: 4px;
-    background: linear-gradient(135deg, #fff 30%, var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: none;
-    filter: drop-shadow(0 0 20px var(--glow));
-  }
-
-  .date {
-    font-size: 13px;
-    color: var(--muted);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-
-  /* Search */
-  .search-wrap {
-    width: 100%;
-    max-width: 520px;
-    position: relative;
-  }
-
-  .search-wrap input {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 52px 14px 18px;
-    color: var(--text);
-    font-size: 15px;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  .search-wrap input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--glow);
-  }
-
-  .search-wrap input::placeholder { color: var(--muted); }
-
-  .search-btn {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--accent2);
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    padding: 4px;
-  }
-
-  /* Section label */
-  .section-label {
-    width: 100%;
-    max-width: 520px;
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: -10px;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* Quick links grid */
-  .links-grid {
-    width: 100%;
-    max-width: 520px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-
-  .link-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 10px;
-    text-decoration: none;
-    color: var(--text);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 7px;
-    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .link-card:active {
-    transform: scale(0.96);
-  }
-
-  .link-card:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 14px var(--glow);
-  }
-
-  .link-icon {
-    font-size: 22px;
-    line-height: 1;
-  }
-
-  .link-name {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.5px;
-    text-align: center;
-  }
-
-  /* Colored accent borders per category */
-  .link-card.anime { border-top: 2px solid var(--accent2); }
-  .link-card.manga { border-top: 2px solid var(--cyan); }
-  .link-card.game  { border-top: 2px solid var(--gold); }
-  .link-card.misc  { border-top: 2px solid #3b82f6; }
-
-  /* Bottom tag */
-  .tag {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 11px;
-    color: var(--border);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    margin-top: 8px;
-  }
+  /* Settings panel */
+  #settings-panel { display:none; position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.7); align-items:flex-end; justify-content:center; }
+  #settings-panel.open { display:flex; }
+  .settings-sheet { background:var(--surface); border:1px solid var(--border); border-bottom:none; border-radius:20px 20px 0 0; width:100%; max-width:520px; padding:24px 20px 36px; display:flex; flex-direction:column; gap:16px; max-height:80vh; overflow-y:auto; }
+  .settings-title { font-size:13px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
+  .wp-count { font-size:12px; color:var(--muted); }
+  .wp-actions { display:flex; gap:10px; }
+  .wp-btn { flex:1; padding:13px 10px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13px; cursor:pointer; text-align:center; transition:border-color 0.2s; -webkit-tap-highlight-color:transparent; }
+  .wp-btn:active { border-color:var(--accent); }
+  .wp-btn.danger { color:#f87171; border-color:#3f1212; background:#1a0a0a; }
+  .wp-thumbs { display:flex; gap:8px; flex-wrap:wrap; }
+  .wp-thumb-wrap { position:relative; display:inline-block; }
+  .wp-thumb { width:64px; height:64px; border-radius:8px; object-fit:cover; border:2px solid var(--border); display:block; }
+  .wp-thumb.active-wp { border-color:var(--accent2); box-shadow:0 0 8px var(--glow); }
+  .wp-del { position:absolute; top:-6px; right:-6px; width:18px; height:18px; border-radius:50%; background:#ef4444; border:none; color:#fff; font-size:11px; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:10; padding:0; }
+  #wp-file-input { display:none; }
 </style>
 </head>
 <body>
+<div id="wp-layer"></div>
 <div class="wrapper">
-
-  <!-- Clock -->
   <div class="clock-block">
     <div class="clock" id="clock">00:00</div>
     <div class="date" id="date">Loading...</div>
   </div>
 
-  <!-- Search -->
   <div class="search-wrap">
-    <input type="text" id="search" placeholder="Search the web..." autocomplete="off" />
-    <button class="search-btn" onclick="doSearch()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-    </button>
+    <div class="engine-wrap">
+      <button class="engine-btn" id="engineBtn" onclick="toggleEngines()">
+        <!-- Google icon default -->
+        <svg id="engineIcon" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      </button>
+      <div class="engine-popup" id="enginePopup">
+        <div class="engine-option active" onclick="selectEngine(0,'Google','https://www.google.com/search?q=')">
+          <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Google
+        </div>
+        <div class="engine-option" onclick="selectEngine(1,'YouTube','https://www.youtube.com/results?search_query=')">
+          <svg viewBox="0 0 48 48"><path fill="#FF0000" d="M47.5 14s-.5-3.5-2-5c-2-2-4.2-2-5.2-2.1C33.8 6.5 24 6.5 24 6.5s-9.8 0-16.3.4C6.7 7 4.5 7 2.5 9 1 10.5.5 14 .5 14S0 18.1 0 22.2v3.9C0 30.2.5 34.3.5 34.3s.5 3.5 2 5c2 2 4.6 1.9 5.8 2.1C12.2 41.8 24 42 24 42s9.8 0 16.3-.5c1-.1 3.2-.1 5.2-2.1 1.5-1.5 2-5 2-5s.5-4.1.5-8.2v-3.9C48 18.1 47.5 14 47.5 14z"/><path fill="#fff" d="M19 31V17l13 7-13 7z"/></svg>
+          YouTube
+        </div>
+        <div class="engine-option" onclick="selectEngine(2,'Bing','https://www.bing.com/search?q=')">
+          <svg viewBox="0 0 48 48"><path fill="#0078D4" d="M8 4l8 3v28l10-6 8 4-18 11V19l-8-3z"/></svg>
+          Bing
+        </div>
+        <div class="engine-option" onclick="selectEngine(3,'DuckDuckGo','https://duckduckgo.com/?q=')">
+          <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#DE5833"/><circle cx="24" cy="20" r="12" fill="#fff"/><circle cx="24" cy="20" r="8" fill="#3F3F3F"/><circle cx="27" cy="17" r="3" fill="#fff"/><path fill="#fff" d="M18 32c0 4 12 4 12 0"/></svg>
+          DuckDuckGo
+        </div>
+      </div>
+    </div>
+    <div class="search-input-wrap">
+      <input type="text" id="search" placeholder="Search Google..." autocomplete="off"/>
+      <button class="search-btn" onclick="doSearch()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
   </div>
 
-  <!-- Anime / Streaming -->
+  <!-- Anime & Streaming -->
   <div class="section-label">Anime & Streaming</div>
   <div class="links-grid">
     <a class="link-card anime" href="https://crunchyroll.com">
-      <span class="link-icon">🎌</span>
+      <svg class="link-icon" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#F47521"/><path fill="#fff" d="M24 10c-7.7 0-14 6.3-14 14s6.3 14 14 14 14-6.3 14-14S31.7 10 24 10zm0 22c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z"/><circle cx="30" cy="18" r="3" fill="#fff"/></svg>
       <span class="link-name">Crunchyroll</span>
     </a>
-    <a class="link-card anime" href="https://www.netflix.com">
-      <span class="link-icon">📺</span>
-      <span class="link-name">Netflix</span>
+    <a class="link-card anime" href="https://dodo-tv.live">
+      <svg class="link-icon" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#1a1a2e"/><rect x="8" y="12" width="32" height="22" rx="3" fill="#4fc3f7"/><rect x="18" y="34" width="12" height="4" fill="#b0bec5"/><rect x="12" y="38" width="24" height="2" rx="1" fill="#b0bec5"/><polygon points="20,18 20,28 30,23" fill="#1a1a2e"/></svg>
+      <span class="link-name">Dodo TV</span>
     </a>
     <a class="link-card anime" href="https://www.youtube.com">
-      <span class="link-icon">▶️</span>
+      <svg class="link-icon" viewBox="0 0 48 48"><path fill="#FF0000" d="M47.5 14s-.5-3.5-2-5c-2-2-4.2-2-5.2-2.1C33.8 6.5 24 6.5 24 6.5s-9.8 0-16.3.4C6.7 7 4.5 7 2.5 9 1 10.5.5 14 .5 14S0 18.1 0 22.2v3.9C0 30.2.5 34.3.5 34.3s.5 3.5 2 5c2 2 4.6 1.9 5.8 2.1C12.2 41.8 24 42 24 42s9.8 0 16.3-.5c1-.1 3.2-.1 5.2-2.1 1.5-1.5 2-5 2-5s.5-4.1.5-8.2v-3.9C48 18.1 47.5 14 47.5 14z"/><path fill="#fff" d="M19 31V17l13 7-13 7z"/></svg>
       <span class="link-name">YouTube</span>
     </a>
   </div>
@@ -267,17 +149,17 @@
   <!-- Manga / Manhwa / Manhua -->
   <div class="section-label">Manga / Manhwa / Manhua</div>
   <div class="links-grid">
-    <a class="link-card manga" href="https://mangadex.org">
-      <span class="link-icon">📖</span>
-      <span class="link-name">MangaDex</span>
+    <a class="link-card manga" href="https://asuracomic.net">
+      <svg class="link-icon" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#1a0a2e"/><path fill="#a855f7" d="M14 36L24 8l10 28"/><path fill="#7c3aed" d="M17 28h14l-7-18z" opacity="0.6"/><path fill="#e2b04a" d="M10 20l4 2-4 2zM38 20l-4 2 4 2z"/></svg>
+      <span class="link-name">Asura Scan</span>
     </a>
-    <a class="link-card manga" href="https://webtoons.com">
-      <span class="link-icon">🖼️</span>
-      <span class="link-name">Webtoon</span>
+    <a class="link-card manga" href="https://mangafire.to">
+      <svg class="link-icon" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#1a0800"/><path fill="#FF4500" d="M24 6 C16 14 12 20 14 28c1 4 4 7 10 8-3-3-4-7-2-10 2 4 6 6 10 5-4-2-6-6-5-10 3 5 8 7 9 12 1 4-1 8-4 10 8-2 12-9 10-16C40 18 30 10 24 6z"/><path fill="#FF8C00" d="M22 22c-2 3-2 7 0 10-2-1-4-4-4-7 0-2 2-4 4-3z"/></svg>
+      <span class="link-name">MangaFire</span>
     </a>
-    <a class="link-card manga" href="https://toonily.com">
-      <span class="link-icon">🌀</span>
-      <span class="link-name">Toonily</span>
+    <a class="link-card manga" href="https://aquamanga.com">
+      <svg class="link-icon" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#001a2e"/><path fill="#06b6d4" d="M24 8 C20 16 14 20 14 28c0 6 4.5 10 10 10s10-4 10-10c0-8-6-12-10-20z"/><path fill="#0ea5e9" d="M24 32c-3 0-5-2-5-4 0-3 2-5 5-8 3 3 5 5 5 8 0 2-2 4-5 4z" opacity="0.7"/></svg>
+      <span class="link-name">AquaScan</span>
     </a>
   </div>
 
@@ -285,65 +167,196 @@
   <div class="section-label">Gaming</div>
   <div class="links-grid">
     <a class="link-card game" href="https://store.steampowered.com">
-      <span class="link-icon">🎮</span>
+      <svg class="link-icon" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#1b2838"/><path fill="#c6d4df" d="M24 8C15.2 8 8 15.2 8 24l8.6 3.5c.7-.4 1.5-.7 2.4-.7l3.8-5.5v-.1c0-3.4 2.8-6.2 6.2-6.2s6.2 2.8 6.2 6.2-2.8 6.2-6.2 6.2h-.1l-5.4 3.9c0 .7-.2 1.4-.5 2L32 36c4.6-1.9 7.9-6.4 7.9-11.7C40 15.4 32.8 8 24 8z"/><circle cx="29" cy="21.2" r="4" fill="#1b2838"/><circle cx="19" cy="31" r="5" fill="#fff"/></svg>
       <span class="link-name">Steam</span>
     </a>
     <a class="link-card game" href="https://www.ign.com">
-      <span class="link-icon">🕹️</span>
+      <svg class="link-icon" viewBox="0 0 48 48"><rect width="48" height="48" rx="6" fill="#FF0000"/><text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="Arial,sans-serif">IGN</text></svg>
       <span class="link-name">IGN</span>
     </a>
     <a class="link-card game" href="https://reddit.com/r/gaming">
-      <span class="link-icon">👾</span>
+      <svg class="link-icon" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#FF4500"/><circle cx="24" cy="24" r="10" fill="#fff"/><circle cx="20" cy="23" r="2" fill="#FF4500"/><circle cx="28" cy="23" r="2" fill="#FF4500"/><path fill="#FF4500" d="M19 28c1.2 1.5 8.8 1.5 10 0" stroke="#FF4500" stroke-width="1"/><circle cx="34" cy="14" r="3" fill="#fff"/><circle cx="35" cy="13" r="1" fill="#FF4500"/><path fill="#fff" d="M28 16l4-4 2 2-4 3z"/></svg>
       <span class="link-name">r/Gaming</span>
     </a>
   </div>
+</div>
 
-  <!-- Misc -->
-  <div class="section-label">Misc</div>
-  <div class="links-grid">
-    <a class="link-card misc" href="https://reddit.com">
-      <span class="link-icon">🔴</span>
-      <span class="link-name">Reddit</span>
-    </a>
-    <a class="link-card misc" href="https://x.com">
-      <span class="link-icon">𝕏</span>
-      <span class="link-name">X / Twitter</span>
-    </a>
-    <a class="link-card misc" href="https://discord.com/app">
-      <span class="link-icon">💬</span>
-      <span class="link-name">Discord</span>
-    </a>
+<!-- Gear button -->
+<button id="gear-btn" onclick="openSettings()">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+</button>
+
+<!-- Settings panel -->
+<div id="settings-panel" onclick="handleOverlayClick(event)">
+  <div class="settings-sheet">
+    <div class="settings-title">Wallpapers <span class="wp-count" id="wp-count"></span></div>
+    <div class="wp-thumbs" id="wp-thumbs"></div>
+    <div class="wp-actions">
+      <label class="wp-btn" for="wp-file-input">＋ Add Images</label>
+      <input type="file" id="wp-file-input" accept="image/*" multiple onchange="addWallpapers(event)"/>
+      <button class="wp-btn danger" onclick="clearAll()">✕ Clear All</button>
+    </div>
   </div>
-
-  <div class="tag">// Your Domain</div>
 </div>
 
 <script>
+  const engineSVGs = [
+    document.querySelector('.engine-option:nth-child(1) svg').outerHTML,
+    document.querySelector('.engine-option:nth-child(2) svg').outerHTML,
+    document.querySelector('.engine-option:nth-child(3) svg').outerHTML,
+    document.querySelector('.engine-option:nth-child(4) svg').outerHTML,
+  ];
+  let currentUrl = 'https://www.google.com/search?q=';
+
+  function toggleEngines() {
+    document.getElementById('enginePopup').classList.toggle('open');
+  }
+
+  function selectEngine(idx, name, url) {
+    currentUrl = url;
+    document.getElementById('engineIcon').outerHTML = engineSVGs[idx].replace('<svg ', '<svg id="engineIcon" ');
+    document.querySelectorAll('.engine-option').forEach(el => el.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('enginePopup').classList.remove('open');
+    document.getElementById('search').placeholder = 'Search ' + name + '...';
+  }
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.engine-wrap')) document.getElementById('enginePopup').classList.remove('open');
+  });
+
   function updateClock() {
     const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('clock').textContent = h + ':' + m;
-
+    document.getElementById('clock').textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
     const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    document.getElementById('date').textContent =
-      days[now.getDay()] + ' · ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+    document.getElementById('date').textContent = days[now.getDay()] + ' · ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
   }
 
   updateClock();
   setInterval(updateClock, 1000);
 
-  document.getElementById('search').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') doSearch();
-  });
+  document.getElementById('search').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
 
   function doSearch() {
     const q = document.getElementById('search').value.trim();
     if (!q) return;
-    const url = q.startsWith('http') ? q : 'https://www.google.com/search?q=' + encodeURIComponent(q);
-    window.location.href = url;
+    window.location.href = q.startsWith('http') ? q : currentUrl + encodeURIComponent(q);
   }
+  // ── Wallpaper Gallery ──────────────────────────────
+  const MAX_WP = 10;
+  const STORE_KEY = 'hp_wallpapers'; // JSON array of base64 strings
+  const LAST_KEY  = 'hp_last_idx';
+
+  function loadStore() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function saveStore(arr) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(arr)); } catch(e) {
+      alert('Storage full — try removing some wallpapers or using smaller images.');
+    }
+  }
+
+  function applyRandom(wallpapers) {
+    if (!wallpapers.length) return;
+    // pick random, avoid repeating last if >1 image
+    let last = parseInt(localStorage.getItem(LAST_KEY) ?? '-1');
+    let idx;
+    if (wallpapers.length === 1) {
+      idx = 0;
+    } else {
+      do { idx = Math.floor(Math.random() * wallpapers.length); } while (idx === last);
+    }
+    localStorage.setItem(LAST_KEY, idx);
+    document.getElementById('wp-layer').style.backgroundImage = 'url(' + wallpapers[idx] + ')';
+    document.body.classList.add('has-wp');
+    return idx;
+  }
+
+  function renderThumbs(wallpapers, activeIdx) {
+    const container = document.getElementById('wp-thumbs');
+    container.innerHTML = '';
+    wallpapers.forEach((src, i) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'wp-thumb-wrap';
+      const img = document.createElement('img');
+      img.className = 'wp-thumb' + (i === activeIdx ? ' active-wp' : '');
+      img.src = src;
+      const del = document.createElement('button');
+      del.className = 'wp-del';
+      del.textContent = '×';
+      del.onclick = () => deleteWallpaper(i);
+      wrap.appendChild(img);
+      wrap.appendChild(del);
+      container.appendChild(wrap);
+    });
+    const count = document.getElementById('wp-count');
+    count.textContent = wallpapers.length ? wallpapers.length + '/' + MAX_WP : '(none)';
+  }
+
+  function addWallpapers(e) {
+    const files = Array.from(e.target.files);
+    const wallpapers = loadStore();
+    const slots = MAX_WP - wallpapers.length;
+    if (slots <= 0) { alert('Max ' + MAX_WP + ' wallpapers reached. Delete some first.'); return; }
+    const toAdd = files.slice(0, slots);
+    let loaded = 0;
+    toAdd.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        wallpapers.push(ev.target.result);
+        loaded++;
+        if (loaded === toAdd.length) {
+          saveStore(wallpapers);
+          const idx = applyRandom(wallpapers);
+          renderThumbs(wallpapers, idx);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = '';
+  }
+
+  function deleteWallpaper(i) {
+    const wallpapers = loadStore();
+    wallpapers.splice(i, 1);
+    saveStore(wallpapers);
+    localStorage.removeItem(LAST_KEY);
+    if (wallpapers.length) {
+      const idx = applyRandom(wallpapers);
+      renderThumbs(wallpapers, idx);
+    } else {
+      document.getElementById('wp-layer').style.backgroundImage = '';
+      document.body.classList.remove('has-wp');
+      renderThumbs([], -1);
+    }
+  }
+
+  function clearAll() {
+    if (!confirm('Remove all wallpapers?')) return;
+    localStorage.removeItem(STORE_KEY);
+    localStorage.removeItem(LAST_KEY);
+    document.getElementById('wp-layer').style.backgroundImage = '';
+    document.body.classList.remove('has-wp');
+    renderThumbs([], -1);
+  }
+
+  function openSettings() {
+    const wallpapers = loadStore();
+    const last = parseInt(localStorage.getItem(LAST_KEY) ?? '-1');
+    renderThumbs(wallpapers, last);
+    document.getElementById('settings-panel').classList.add('open');
+  }
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('settings-panel')) closeSettings();
+  }
+  function closeSettings() { document.getElementById('settings-panel').classList.remove('open'); }
+
+  // On load: pick random wallpaper
+  (function() {
+    const wallpapers = loadStore();
+    if (wallpapers.length) applyRandom(wallpapers);
+  })();
 </script>
 </body>
 </html>
